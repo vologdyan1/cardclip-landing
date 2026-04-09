@@ -168,7 +168,7 @@
         </p>
 
         <div class="hero-cta-group">
-          <a href="#cta" class="btn-primary" id="heroCta">
+          <a href="#" class="btn-primary js-open-modal" id="heroCta">
             <span>🚀</span> Получить видео за 24 часа
           </a>
           <a href="#showcase" class="btn-secondary">
@@ -452,7 +452,7 @@
             <li><span class="check">✓</span> Готовность 24 часа</li>
             <li><span class="check">✓</span> Full HD качество</li>
           </ul>
-          <a href="#cta" class="btn-secondary">Выбрать Старт</a>
+          <a href="#" class="btn-secondary js-open-modal" data-plan="Старт">Выбрать Старт</a>
         </article>
 
         <!-- БИЗНЕС -->
@@ -468,7 +468,7 @@
             <li><span class="check">✓</span> A/B варианты обложек</li>
             <li><span class="check">✓</span> Full HD качество</li>
           </ul>
-          <a href="#cta" class="btn-primary">Выбрать Бизнес</a>
+          <a href="#" class="btn-primary js-open-modal" data-plan="Бизнес">Выбрать Бизнес</a>
         </article>
 
         <!-- МАСШТАБ -->
@@ -485,7 +485,7 @@
             <li><span class="check">✓</span> Full HD качество</li>
             <li><span class="check">✓</span> Персональный менеджер</li>
           </ul>
-          <a href="#cta" class="btn-secondary">Выбрать Масштаб</a>
+          <a href="#" class="btn-secondary js-open-modal" data-plan="Масштаб">Выбрать Масштаб</a>
         </article>
       </div>
     </div>
@@ -724,7 +724,7 @@
           для карточки товара. От 490₽ за ролик, результат за 24 часа.
         </p>
 
-        <a href="#" class="btn-primary" id="finalCta">
+        <a href="#" class="btn-primary js-open-modal" id="finalCta">
           <span>🎬</span> Заказать AI-видео
         </a>
 
@@ -760,6 +760,45 @@
       </div>
     </div>
   </footer>
+
+  <!-- ============================================================
+       MODAL (Web3Forms)
+       ============================================================ -->
+  <div class="modal-overlay" id="orderModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" aria-label="Закрыть окно">×</button>
+      <h3 class="modal-title">Оставьте заявку</h3>
+      <p class="modal-text">Мы свяжемся с вами в течение короткого времени для обсуждения видеоролика.</p>
+      
+      <form action="https://api.web3forms.com/submit" method="POST" class="modal-form" id="orderForm">
+        <!-- Web3Forms API Key -->
+        <input type="hidden" name="access_key" value="89a451c5-89a1-472c-a99f-28f12145119a">
+        <!-- Optional Subject -->
+        <input type="hidden" name="subject" value="Новая заявка с сайта CardClip">
+        <input type="hidden" name="from_name" value="CardClip Landing">
+        <!-- Hidden Plan Info -->
+        <input type="hidden" name="Тариф" id="selectedPlan" value="С сайта (Основная кнопка)">
+
+        <div class="form-group">
+          <label for="userName">Имя</label>
+          <input type="text" id="userName" name="Имя" required placeholder="Как к вам обращаться?">
+        </div>
+        
+        <div class="form-group">
+          <label for="userPhone">Телефон / Telegram</label>
+          <input type="text" id="userPhone" name="Контакты" required placeholder="+7 (999) 000-00-00">
+        </div>
+
+        <div class="form-checkbox">
+          <input type="checkbox" id="privacyPolicy" name="Согласие_на_обработку" required checked>
+          <label for="privacyPolicy">Я согласен с <a href="#" style="color:var(--accent-glow); text-decoration:none;">политикой обработки данных</a></label>
+        </div>
+
+        <button type="submit" class="btn-primary form-submit">Отправить заявку</button>
+        <div class="form-result" id="formResult"></div>
+      </form>
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script src="script.js"></script>

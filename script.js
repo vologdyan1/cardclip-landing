@@ -218,14 +218,101 @@ document.addEventListener('DOMContentLoaded', () => {
       const video = card.querySelector('video');
       if (video) {
         card.addEventListener('mouseenter', () => {
-          // Attempt to play, catch any DOMException from browsers if needed
           video.play().catch(e => console.warn('Autoplay prevented:', e));
         });
         card.addEventListener('mouseleave', () => {
           video.pause();
-          // Reset without calling .load() to prevent screen flash
           video.currentTime = 0;
         });
+      }
+    });
+  }
+
+  // ---- MODAL (Lead Capture) ----
+  const modal       = document.getElementById('orderModal');
+  const modalForm   = document.getElementById('orderForm');
+  const formResult  = document.getElementById('formResult');
+  const selectedPlan = document.getElementById('selectedPlan');
+  const closeBtn    = modal ? modal.querySelector('.modal-close') : null;
+
+  function openModal(planName) {
+    if (!modal) return;
+    if (planName && selectedPlan) selectedPlan.value = planName;
+    modal.classList.add('is-active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    // Focus first input
+    const firstInput = modal.querySelector('input[type="text"]');
+    if (firstInput) setTimeout(() => firstInput.focus(), 100);
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.classList.remove('is-active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (formResult) formResult.textContent = '';
+  }
+
+  // Open on all .js-open-modal buttons
+  document.querySelectorAll('.js-open-modal').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const plan = btn.dataset.plan || 'С сайта (Основная кнопка)';
+      openModal(plan);
+    });
+  });
+
+  // Close on × button
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+  // Close on backdrop click
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && modal.classList.contains('is-active')) {
+      closeModal();
+    }
+  });
+
+  // Form submit via fetch (no page reload)
+  if (modalForm) {
+    modalForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = modalForm.querySelector('.form-submit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправляем...';
+      formResult.style.color = 'var(--text-secondary)';
+      formResult.textContent = '';
+
+      try {
+        const data = new FormData(modalForm);
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: data
+        });
+        const json = await res.json();
+
+        if (json.success) {
+          formResult.style.color = '#4caf83';
+          formResult.textContent = '✓ Заявка принята! Мы свяжемся с вами в ближайшее время.';
+          modalForm.reset();
+          submitBtn.textContent = 'Отправить заявку';
+          submitBtn.disabled = false;
+          setTimeout(closeModal, 3000);
+        } else {
+          throw new Error(json.message || 'Ошибка отправки');
+        }
+      } catch (err) {
+        formResult.style.color = 'var(--accent-glow)';
+        formResult.textContent = '⚠ Что-то пошло не так. Напишите нам напрямую в Telegram.';
+        submitBtn.textContent = 'Отправить заявку';
+        submitBtn.disabled = false;
       }
     });
   }
